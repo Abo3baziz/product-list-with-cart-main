@@ -1,10 +1,14 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useContext } from 'react';
 import cartIcon from '../assets/images/icon-add-to-cart.svg';
 import { formatPrice } from '../utils/format';
+import CartContext from '../context/cartContext';
 
 function Item({ image, name, price, category }) {
   const [width, setWidth] = useState(window.innerWidth);
+
   const [src, setSrc] = useState(image.desktop);
+
+  const { addItem, removeItem, items } = useContext(CartContext);
 
   useEffect(() => {
     const handleResize = () => {
@@ -26,6 +30,15 @@ function Item({ image, name, price, category }) {
     }
   }, [width, image]);
 
+  function handleAddItem(name, price) {
+    addItem(name, price);
+    console.log(items);
+  }
+
+  function handleRemoveItem(name) {
+    removeItem(name);
+  }
+
   return (
     <div className="w-auto h-auto overflow-hidden">
       <div>
@@ -34,7 +47,12 @@ function Item({ image, name, price, category }) {
           alt={name}
           className="object-cover static rounded-[10px]"
         />
-        <button className="mt-2 w-fit rounded-[50px] border border-[var(--Rose-900)] bg-white relative bottom-2 left-[50%] -translate-[50%] py-3 px-8">
+        <button
+          onMouseUp={() => {
+            handleAddItem(name, price);
+          }}
+          className="mt-2 w-fit rounded-[50px] border bg-white relative bottom-2 left-[50%] -translate-[50%] py-3 px-8 hover:text-(--Red) duration-200 ease-in cursor-pointer"
+        >
           <img src={cartIcon} alt="cart icon" className="inline mr-1" /> Add to
           Cart
         </button>
