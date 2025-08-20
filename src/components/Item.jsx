@@ -1,14 +1,15 @@
 import { useEffect, useState, useContext } from 'react';
-import cartIcon from '../assets/images/icon-add-to-cart.svg';
 import { formatPrice } from '../utils/format';
+import ControlButton from './ControlButton';
+import AddButton from './AddButton';
 import CartContext from '../context/cartContext';
 
 function Item({ image, name, price, category }) {
   const [width, setWidth] = useState(window.innerWidth);
+  const [isItemSelected, setIsItemSelected] = useState(false);
+  const { items, addItem } = useContext(CartContext);
 
   const [src, setSrc] = useState(image.desktop);
-
-  const { addItem, removeItem, items } = useContext(CartContext);
 
   useEffect(() => {
     const handleResize = () => {
@@ -30,32 +31,24 @@ function Item({ image, name, price, category }) {
     }
   }, [width, image]);
 
-  function handleAddItem(name, price) {
-    addItem(name, price);
-    console.log(items);
-  }
+  let cssClasses = isItemSelected
+    ? 'object-cover static rounded-[10px] border-4 border-(--Red)'
+    : 'object-cover static rounded-[10px]';
 
-  function handleRemoveItem(name) {
-    removeItem(name);
+  function handleAddItem(name) {
+    addItem(name);
+    setIsItemSelected(true);
   }
 
   return (
-    <div className="w-auto h-auto overflow-hidden">
+    <div>
       <div>
-        <img
-          src={src}
-          alt={name}
-          className="object-cover static rounded-[10px]"
-        />
-        <button
-          onMouseUp={() => {
-            handleAddItem(name, price);
-          }}
-          className="mt-2 w-fit rounded-[50px] border bg-white relative bottom-2 left-[50%] -translate-[50%] py-3 px-8 hover:text-(--Red) duration-200 ease-in cursor-pointer"
-        >
-          <img src={cartIcon} alt="cart icon" className="inline mr-1" /> Add to
-          Cart
-        </button>
+        <img src={src} alt={name} className={cssClasses} />
+        {isItemSelected ? (
+          <ControlButton name={name} price={price} />
+        ) : (
+          <AddButton onAdd={handleAddItem} />
+        )}
       </div>
 
       <div className="-mt-5">
