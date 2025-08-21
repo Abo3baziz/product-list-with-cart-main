@@ -2,7 +2,7 @@ import { useEffect, useState, useContext } from 'react';
 import { formatPrice } from '../utils/format';
 import ControlButton from './ControlButton';
 import AddButton from './AddButton';
-import CartContext from '../context/cartContext';
+import CartContext from '../context/CartContext';
 
 function Item({ image, name, price, category }) {
   const [width, setWidth] = useState(window.innerWidth);
@@ -31,12 +31,17 @@ function Item({ image, name, price, category }) {
     }
   }, [width, image]);
 
+  useEffect(() => {
+    const existsInCart = items.some((item) => item.name === name);
+    setIsItemSelected(existsInCart);
+  }, [items, name]);
+
   let cssClasses = isItemSelected
-    ? 'object-cover static rounded-[10px] border-4 border-(--Red)'
+    ? 'object-cover static rounded-[10px] border-4 border-[var(--Red)]'
     : 'object-cover static rounded-[10px]';
 
-  function handleAddItem(name) {
-    addItem(name);
+  function handleAddItem(name, price) {
+    addItem(name, price);
     setIsItemSelected(true);
   }
 
@@ -45,16 +50,16 @@ function Item({ image, name, price, category }) {
       <div>
         <img src={src} alt={name} className={cssClasses} />
         {isItemSelected ? (
-          <ControlButton name={name} price={price} />
+          <ControlButton name={name} />
         ) : (
-          <AddButton onAdd={handleAddItem} />
+          <AddButton onAdd={() => handleAddItem(name, price)} />
         )}
       </div>
 
       <div className="-mt-5">
         <p className="text-sm text-gray-500">{category}</p>
         <p className="text-lg font-semibold">{name}</p>
-        <p className="text-(--Red) font-bold">{formatPrice(price)}</p>
+        <p className="text-[var(--Red)] font-bold">{formatPrice(price)}</p>
       </div>
     </div>
   );
