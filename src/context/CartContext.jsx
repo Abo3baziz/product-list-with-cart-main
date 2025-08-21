@@ -4,6 +4,8 @@ const CartContext = createContext({
   items: [],
   addItem: () => {},
   removeItem: () => {},
+  deleteItem: () => {},
+  clearCart: () => {},
 });
 
 function cartReducer(state, action) {
@@ -50,6 +52,17 @@ function cartReducer(state, action) {
     return { ...state, items: updatedItems };
   }
 
+  if (action.type === 'deleteItem') {
+    const updatedItems = state.items.filter(
+      (item) => item.name !== action.payload.name
+    );
+    return { ...state, items: updatedItems };
+  }
+
+  if (action.type === 'clearCart') {
+    return { ...state, items: [] };
+  }
+
   return state;
 }
 
@@ -66,10 +79,20 @@ export function CartContextProvider({ children }) {
     dispatch({ type: 'removeItem', payload: { name } });
   }
 
+  function deleteItem(name) {
+    dispatch({ type: 'deleteItem', payload: { name } });
+  }
+
+  function clearCart() {
+    dispatch({ type: 'clearCart' });
+  }
+
   const value = {
     items: cart.items,
     addItem,
     removeItem,
+    deleteItem,
+    clearCart,
   };
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>;
