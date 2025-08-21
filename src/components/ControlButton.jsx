@@ -1,9 +1,9 @@
 import { useContext } from 'react';
 import decrementIcon from '../assets/images/icon-decrement-quantity.svg';
 import incrementIcon from '../assets/images/icon-increment-quantity.svg';
-import CartContext from '../context/cartContext';
+import CartContext from '../context/CartContext';
 
-function ControlButton({ name, price }) {
+function ControlButton({ name }) {
   const { addItem, removeItem, items } = useContext(CartContext);
 
   function handleAddItem(name) {
@@ -14,18 +14,11 @@ function ControlButton({ name, price }) {
     removeItem(name);
   }
 
-  let count = items.reduce((accumulator, currentValue) => {
-    if (currentValue.name === name) {
-      if (currentValue.quantity < 1) {
-        return 0;
-      }
-      return accumulator + currentValue.quantity;
-    }
-    return accumulator;
-  }, 1);
+  let item = items.find((i) => i.name === name);
+  let count = item ? item.quantity : 0;
 
   return (
-    <div className="bg-(--Red) flex justify-between w-50 py-3 px-3 rounded-[50px] relative left-[50%] -translate-[50%]">
+    <div className="bg-[var(--Red)] flex justify-between w-[200px] py-3 px-3 rounded-[50px] relative bottom-2 left-[50%] translate-[-50%]">
       <button
         className="cursor-pointer"
         onMouseUp={() => {
@@ -42,7 +35,7 @@ function ControlButton({ name, price }) {
       <button
         className="cursor-pointer"
         onMouseUp={() => {
-          handleAddItem(name, price);
+          handleAddItem(name);
         }}
       >
         <img
